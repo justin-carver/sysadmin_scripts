@@ -1,10 +1,11 @@
 # Pings the host. If the host is down, will create a flag_file to keep track
 # of the previous check of it's uptime. If the file is newer than 1 hour,
-# the script will not execute, buying the admin time to correct the issue,
-# without flooding SMTP servers or inboxes.
+# the script will not execute, buying the admin time to correct the issue.
+# If it has been more than 1 hour, the server will send an email via SMTP.
+# 
+# The script must have write access to the specified 'flags' folder below.
 #
-# Each host should get a separate crontab entry.
-#
+# Each tracked host should get a separate crontab entry.
 # Crontab Example: 
 # */5 * * * * /usr/bin/python3 /root/scripts/heartbeat.py 10.0.0.27 "Sandbox Server" >> /var/log/heartbeat.log 2>&1
 #
@@ -53,6 +54,11 @@ def send_email(subject, message, from_email, to_email, smtp_server, smtp_port, s
     msg['Subject'] = subject
     msg['From'] = from_email
     msg['To'] = to_email
+
+    # Set headers for high importance
+    msg['X-Priority'] = '1'  # High priority (1 = highest, 3 = normal, 5 = lowest)
+    msg['Priority'] = 'urgent'
+    msg['Importance'] = 'high'
 
     try:
         with smtplib.SMTP(smtp_server, smtp_port) as server:

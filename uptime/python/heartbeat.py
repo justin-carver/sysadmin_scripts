@@ -70,7 +70,8 @@ def send_email(subject, message, from_email, to_email, smtp_server, smtp_port, s
         print(f"[{datetime.datetime.now()}] Failed to send email: {e}")
 
 if is_server_up(args.host_ip):
-    print(f"[{datetime.datetime.now()}] {args.host_name} ({args.host_ip}) is up and running.")
+    # uncomment the below for recorded uptime
+    # print(f"[{datetime.datetime.now()}] {args.host_name} ({args.host_ip}) is up and running.")
     if os.path.exists(down_flag_file):
         os.remove(down_flag_file)
 else:
